@@ -1,0 +1,11 @@
+# Local Python environment and bytecode
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# SQLite database created under Flask's instance folder
+instance/
+
+# Secrets — copy .env.example if you add one, never commit real keys
+.env
