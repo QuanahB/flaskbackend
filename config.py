@@ -29,3 +29,10 @@ class Config:
     # Origins allowed to call Flask *directly* (bypassing the Vite proxy).
     # The local React Router dev server is 5173.
     CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "http://localhost:5173").split(",")
+
+    # Stripe secret key (sk_test_...) — never sent to the browser.
+    STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
+    # Webhook signing secret (whsec_...) from `stripe listen` or the Dashboard.
+    STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+    # Storefront origin used for Stripe success/cancel redirects.
+    FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "http://localhost:5173")

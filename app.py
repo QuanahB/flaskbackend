@@ -3,11 +3,18 @@ Store API application factory.
 
 Run from this directory (with the venv active):
 
-    flask --app app:create_app --debug run --port 5000
+    flask --app app --debug run --port 5000
 
 The React storefront (port 5173) proxies /api here during development.
 JSON shapes are defined in my-react-router-app/app/lib/types.ts.
 """
+
+from pathlib import Path
+
+# Load flaskbackend/.env before Config reads os.environ (Stripe keys, etc.).
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 import os
 
@@ -16,6 +23,7 @@ from flask_cors import CORS
 
 from config import Config
 from extensions import db
+from schema import ensure_sqlite_columns
 from seed import seed_if_empty
 
 
@@ -63,6 +71,7 @@ def create_app() -> Flask:
         import models  # noqa: F401
 
         db.create_all()
+        ensure_sqlite_columns()
         seed_if_empty()
 
     return app

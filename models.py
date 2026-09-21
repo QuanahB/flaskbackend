@@ -95,6 +95,10 @@ class Order(db.Model):
     shipping_city = db.Column(db.String(120), nullable=False)
     shipping_postal_code = db.Column(db.String(32), nullable=False)
     shipping_country = db.Column(db.String(80), nullable=True)
+    # Stripe Checkout Session id (cs_test_...) so webhooks can find this row.
+    stripe_checkout_session_id = db.Column(db.String(255), nullable=True, unique=True)
+    # PaymentIntent id (pi_...) for refunds / Dashboard lookup later.
+    stripe_payment_intent_id = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=_utcnow)
 
     items = db.relationship(
