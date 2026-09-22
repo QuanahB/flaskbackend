@@ -13,6 +13,12 @@ pip install -r requirements.txt
 flask --app app --debug run --port 5000
 ```
 
+On Render, the start command must be `gunicorn` (installed via this file):
+
+```bash
+gunicorn app:app --bind 0.0.0.0:$PORT
+```
+
 Then in the React project:
 
 ```bash
