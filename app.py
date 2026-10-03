@@ -27,15 +27,32 @@ from schema import ensure_sqlite_columns
 from seed import seed_if_empty
 
 
+def database_uri(instance_path: str) -> str:
+    """
+    Render sets DATABASE_URL (often postgres://…). Locally we keep SQLite.
+
+    SQLAlchemy 2 does not accept the postgres:// scheme Render still uses.
+    """
+    raw = (
+        os.environ.get("DATABASE_URL")
+        or os.environ.get("SQLALCHEMY_DATABASE_URI")
+        or ""
+    ).strip()
+    if raw:
+        if raw.startswith("postgres://"):
+            raw = "postgresql://" + raw[len("postgres://") :]
+        return raw
+
+    os.makedirs(instance_path, exist_ok=True)
+    return f"sqlite:///{os.path.join(instance_path, 'store.db')}"
+
+
 def create_app() -> Flask:
     """Build the Flask app, database, CORS, and /api routes."""
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(Config)
 
-    # instance/ is Flask's local data dir (gitignored). SQLite lives there.
-    os.makedirs(app.instance_path, exist_ok=True)
-    db_path = os.path.join(app.instance_path, "store.db")
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_uri(app.instance_path)
 
     db.init_app(app)
 
@@ -71,7 +88,9 @@ def create_app() -> Flask:
         import models  # noqa: F401
 
         db.create_all()
-        ensure_sqlite_columns()
+        uri = app.config["SQLALCHEMY_DATABASE_URI"]
+        if uri.startswith("sqlite:"):
+            ensure_sqlite_columns()
         seed_if_empty()
 
     return app

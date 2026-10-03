@@ -16,8 +16,7 @@ class Config:
     # the shopper. Change this before deploying anywhere public.
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me")
 
-    # SQLite file path is set in create_app() so it lives in instance/store.db
-    # next to this project, not in a surprise system directory.
+    # SQLite locally; on Render set DATABASE_URL to the Internal Database URL.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Session cookie: HttpOnly so JavaScript cannot read it; SameSite=Lax so

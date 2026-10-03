@@ -28,6 +28,9 @@ npm run dev
 Vite proxies `/api` → `http://127.0.0.1:5000` (see `vite.config.ts`).
 The home page health banner turns green when both are up.
 
+On Render, set `DATABASE_URL` to the Postgres **Internal Database URL**.
+If it is unset, Flask uses SQLite at `instance/store.db`.
+
 ## Stripe (test mode)
 
 1. Put `STRIPE_SECRET_KEY` in `flaskbackend/.env`.
