@@ -31,7 +31,8 @@ def database_uri(instance_path: str) -> str:
     """
     Render sets DATABASE_URL (often postgres://…). Locally we keep SQLite.
 
-    SQLAlchemy 2 does not accept the postgres:// scheme Render still uses.
+    SQLAlchemy 2.1+ uses the `psycopg` (v3) package for postgresql://.
+    This app installs psycopg2-binary, so we force the psycopg2 dialect.
     """
     raw = (
         os.environ.get("DATABASE_URL")
@@ -41,6 +42,8 @@ def database_uri(instance_path: str) -> str:
     if raw:
         if raw.startswith("postgres://"):
             raw = "postgresql://" + raw[len("postgres://") :]
+        if raw.startswith("postgresql://"):
+            raw = "postgresql+psycopg2://" + raw[len("postgresql://") :]
         return raw
 
     os.makedirs(instance_path, exist_ok=True)
